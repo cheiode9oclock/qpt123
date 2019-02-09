@@ -1,6 +1,6 @@
 {
   "name": "qpt123",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A nice greeter",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
