@@ -10,5 +10,6 @@
     "jsx",
     "json",
     "node"
-  ]
+  ],
+  "testPathIgnorePatterns": ["/lib/", "/.history/"]
 }
