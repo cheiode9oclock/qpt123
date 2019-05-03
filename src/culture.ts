@@ -1,3 +1,4 @@
+import { Compute } from '.';
 import { Color } from './color';
 import { Relation } from './relation';
 
@@ -5,253 +6,144 @@ import { Relation } from './relation';
  * Ccollection of groups of colors indexed by names
  */
 export class Culture {
-  /**
-   * this module version
-   */
-
   get items() {
-    return this.mItems;
+    return this.m_items;
   }
-  public name = '';
-  public id = '';
 
   /**
    * Ccollection of groups of colors indexed by names
    */
+  protected m_items = new Array<Relation>();
 
-  protected mItems = new Array<Relation>();
 
   /**
-   * Create a collection of groups of colors indexed by names
+   * Add a color to this culture
+   * @param color Color to be added
    */
-  constructor() {
-    // this._colors = new Map<string, Group>();
-    // this._cache = new Array<[string, Group]>();
-
-  }
-
-  public addColor(color: Color): boolean {
-
+  public addColor(color: Color): Relation {
     if (color !== undefined && color !== null) {
-      // if (color instanceof Culture) {
-      // if (this._items.indexOf(color) === -1) {
-      this.mItems.push(new Relation(color));
-      return true;
-      // }
-      // }
-      //  else {
-      //   if (this._colors.indexOf(color) === -1) {
-      //     this._colors.push(color);
-      //     return true;
-      //   }
-      // }
+      const rel = new Relation(color);
+
+      this.m_items.push(rel);
+
+      return rel;
     }
-    return false;
+    throw new Error('Culture cant add an undefined color');
   }
 
-  public addRelation(relation: Relation) {
+  /**
+   * 
+   * @param modifier A color or method that will modify
+   * @param from 
+   * @param list 
+   */
+  public addRelation(modifier: any = null, from?: Relation | undefined, list = null): Relation {
+    const relation = new Relation(modifier, from, list);
 
-    const reference = null;
-
-    if (relation !== undefined) {
-      this.mItems.push(relation);
-
-      return this.mItems.length - 1;
+    if (relation.from !== undefined) {
+      relation.fromList = this.m_items;
     }
 
-    throw new Error('Culture can\'t add a null relation');
+    this.m_items.push(relation);
 
+    return relation;
   }
 
-  // public getIndex(index: number) {
-  //   const relation = this._items[index] as Relation;
-  //   return relation.result(this, relation.fromIndex, this._items);
-  // }
-  // /**
-  //  * Make a cache so frameworks like Angular do not keep updating the view because values are stored in a map...
-  //  */
-  // protected _cache: [string, Group][];
+  // According to https://sighack.com/post/averaging-rgb-colors-the-right-way, https://www.youtube.com/watch?v=LKnqECcg6Gw
+  /**
+   * Average color of the items in this Culture
+   */
+  public get average(): Color {
+    const colors = this.items.map(o => {
+      return o.result.rgb();
+    });
+    return Compute.average(colors);
+  }
 
+  /**
+   * Remove item from culture
+   * @param name Item id
+   */
+  public removeById(id: string): Relation | undefined {
+    if (id !== '') {
+      const index = this.items.findIndex(o => o.id === id);
+      if (index > -1) {
+        return this.items.splice(index, 1)[0];
+      }
+    }
+    return undefined;
+  }
 
+  public remove(relation: Relation): Relation | undefined {
+    if (relation === undefined) { throw new Error('Culture cannot remove an undefined relation'); }
+    return this.removeById(relation.id);
+  }
 
-  // /**
-  //  * Return colors in this group
-  //  */
-  // get colors(): [string, Group][] {
-  //   return this._cache;
-  // }
+  /**
+   * Get an item by its id
+   * @param id Item id
+   */
+  public getById(id: string): Relation | undefined {
 
-  // /**
-  //  * Update array cache
-  //  */
-  // updateCache() {
-  //   this._cache = Array.from(this._colors);
-  // }
+    if (id !== '') {
+      const index = this.items.findIndex(o => o.id === id);
+      if (index > -1) {
+        return this.items[index];
+      }
+    }
+    return undefined;
+  }
 
+  /**
+   * Get an item by its index
+   * @param id Item index
+   */
+  public getAt(index: number): Relation | undefined {
+    return this.items[index];
+  }
 
-  // /**
-  //  * Link a group of colors to a name, so that them can be retrieved by it latter
-  //  * @param name Name by which this group of colors will be recognized
-  //  * @param shape Group of colors
-  //  */
-  // set(name: string, shape: Group) {
-  //   this._colors.set(name, shape.clone());
-  //   this.updateCache();
-  // }
+  /**
+   * Get an item by its index and return the resulting color
+   * @param id Item index
+   */
+  public getColorAt(index: number): Color | undefined {
+    try {
+      this.items[index].result;
+    } catch (e) {
+      throw new Error("Culture getColorAt " + e);
+    }
+    return undefined;
+  }
 
-  // /**
-  // * Add color to an index
-  //  * @param name Index where the color will be added
-  //  * @param color Color to be added
-  //  */
-  // add(name: string, color: Color): boolean {
-  //   if (this._colors.has(name)) {
-  //     let copy = this._colors.get(name);
-  //     if (copy != undefined) {
-  //       copy.add(color);
-  //       this._colors.set(name, copy);
-  //       this.updateCache();
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // }
+  /**
+   * Pick a random color vertex of the path
+   */
+  public randomColor(): Color | undefined {
+    if (this.items === undefined || this.items.length === 0) {
+      throw new Error('Cannot pick random color of an empty culture');
+    }
 
-  // /**
-  //  * Remove shape named after this
-  //  * @param name Name of the shape
-  //  */
-  // remove(name: string): Group | undefined {
-  //   if (this._colors.has(name)) {
-  //     const result = this._colors.get(name);
-  //     this._colors.delete(name);
-  //     this.updateCache();
+    const index = Math.floor(Math.random() * this.items.length);
 
-  //     return result;
-  //   }
-  //   return undefined;
-  // }
+    return this.items[index].result;
+  }
 
-  // /**
-  //  * Remove every instance of this color in the shape named after name
-  //  * @param name Name of the shape
-  //  * @param color Color to be removed
-  //  */
-  // removeByColor(name: string, color: Color): boolean {
+  /**
+   * Get a Color from mixing two random colors in this culture
+   */
+  public randomMix(): Color {
+    if (this.items === undefined || this.items.length === 0) {
+      throw new Error('Cannot pick random color mix of an empty culture');
+    }
+    const pool = [...this.items];
+    let size = pool.length;
+    const firstColor = pool.splice(Math.floor(Math.random() * size))[0].result;
+    if (size === 1) {
+      return firstColor;
+    }
+    size = pool.length;
+    const secondColor = pool.splice(Math.floor(Math.random() * size))[0].result;
 
-  //   if (this._colors.has(name)) {
-  //     let copy = this._colors.get(name);
-  //     if (copy != undefined && copy.removeByColor(color)) {
-  //       this._colors.set(name, copy);
-  //       this.updateCache();
-
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-
-  // }
-
-  // /**
-  //  * Remove a color from a group based on its order
-  //  * @param name Name of the group
-  //  * @param index Order of the color in the group
-  //  */
-  // removeByIndex(name: string, index: number): boolean {
-
-  //   if (this._colors.has(name)) {
-  //     let copy = this._colors.get(name);
-  //     if (copy != undefined && copy.removeByIndex(index)) {
-  //       this._colors.set(name, copy);
-  //       this.updateCache();
-
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // }
-
-  // /**
-  //  * Get a group of colors by its name
-  //  * @param name Name of the group
-  //  */
-  // getByName(name: string): Group | undefined {
-  //   const result = this._colors.get(name);
-  //   if (result) {
-  //     return result.clone();
-  //   }
-  //   return undefined;
-  // }
-
-  // /**
-  //  * Get a random color in this culture
-  //  */
-  // randomMix(): Color | undefined {
-  //   let populatedShapes = new Array<Group>();
-  //   let totalColors = 0;
-
-  //   //if a shape is present but has no colors do not count as a possible random pick
-  //   this._colors.forEach((value) => { if (value.colors.length) { populatedShapes.push(value.clone()); totalColors+=value.colors.length; } });
-
-  //   const keySize = populatedShapes.length;
-
-  //   if (totalColors == 0) {
-  //     return undefined;
-  //   }
-
-  //   let pickRandom = Math.floor(Math.random() * totalColors);
-
-  //   for (let count = 0; count < keySize; count++) {
-  //     const s = populatedShapes[count];
-  //     if (pickRandom < s.colors.length) {
-
-  //       return s.randomMix();
-
-  //     }
-  //     pickRandom -= s.colors.length;
-  //   };
-
-  //   return undefined;
-  // }
-
-  // /**
-  // /* Pick a random color vertex of the path
-  // */
-  // randomColor(): Color | undefined {
-  //   let populatedShapes = new Array<Group>();
-  //   let totalColors = 0;
-
-  //   //if a shape is present but has no colors do not count as a possible random pick
-  //   this._colors.forEach((value) => { if (value.colors.length) { populatedShapes.push(value.clone()); totalColors+=value.colors.length; } });
-
-  //   const keySize = populatedShapes.length;
-
-  //   if (totalColors == 0) {
-  //     return undefined;
-  //   }
-
-  //   let pickRandom = Math.floor(Math.random() * totalColors);
-
-  //   for (let count = 0; count < keySize; count++) {
-  //     const s = populatedShapes[count];
-  //     if (pickRandom < s.colors.length) {
-
-  //       return s.randomColor();
-
-  //     }
-  //     pickRandom -= s.colors.length;
-  //   };
-
-  //   return undefined;
-  // }
-
-  // /**
-  //  * Check if this culture has this name as an index
-  //  * @param  {string} name Search for this color
-  //  * @returns boolean Returns true if name is present, false if not found
-  //  */
-  // has(name: string): boolean {
-  //   return this._colors.has(name);
-  // }
-
+    return secondColor.mix(firstColor, Math.random());
+  }
 }

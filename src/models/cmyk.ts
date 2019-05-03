@@ -1,14 +1,11 @@
 import { Color } from '../color';
 
 export class CMYK extends Color {
+  public static readonly MODEL: string = 'cmyk';
+  public static readonly ALPHA_INDEX = 4;
+  public static readonly RANGES = [[0, 100], [0, 100], [0, 100], [0, 100], [0, 1]];
 
-  static readonly MODEL: string = 'cmyk';
-  static readonly ALPHA_INDEX = 4;
-  static readonly RANGES = [[0, 100], [0, 100], [0, 100], [0, 100], [0, 1]];
-
-
-  constructor(value: number[] = [0, 0, 0, 0], clampValues = true) {
-    super(value, CMYK.RANGES, CMYK.MODEL, CMYK.ALPHA_INDEX, clampValues);
+  constructor(value?: any, clampValues = true) {
+    super(value, CMYK.MODEL, clampValues);
   }
-
 }

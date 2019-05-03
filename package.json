@@ -1,50 +1,54 @@
 {
   "name": "qpt123",
-  "version": "1.0.9",
-  "description": "A nice greeter",
+  "version": "1.2.3",
+  "description": "crash test package",
   "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "scripts": {
-    "test": "jest --config jestconfig.json",
+    "test": "clear; mocha -r ts-node/register __tests__/**/*.spec.ts",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test",
     "version": "git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "cov": "run-s build test:unit cov:html && opn coverage/index.html",
+    "cov:html": "nyc report --reporter=html",
+    "cov:send": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "cov:check": "nyc report && nyc check-coverage --lines 100 --functions 100 --branches 100",
+    "doc": "typedoc --mode modules --out ./docs/ ./src/"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cheiode9oclock/qpt123.git"
   },
-  "keywords": [
-    "Hello",
-    "Greeter"
-  ],
-  "author": "C-J",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cheiode9oclock/qpt123/issues"
   },
-  "homepage": "https://github.com/cheiode9oclock/qpt123#readme",
-  "devDependencies": {
-    "@types/jest": "^24.0.0",
-    "chai": "^4.2.0",
-    "jest": "^24.1.0",
-    "prettier": "^1.16.4",
-    "ts-jest": "^23.10.5",
-    "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.3.3"
-  },
   "files": [
     "lib/**/*"
   ],
+  "homepage": "https://github.com/cheiode9oclock/qpt123#readme",
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/d3": "5.7.1",
+    "@types/mocha": "^5.2.6",
+    "chai": "^4.2.0",
+    "mocha": "^6.0.0",
+    "nyc": "^13.3.0",
+    "prettier": "^1.16.4",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.3.3"
+  },
   "dependencies": {
-    "@types/node": "^10.12.24",
-    "basic": "^2.0.3",
-    "ngraph.graph": "0.0.15",
-    "ngraph.path": "^1.0.3"
+    "d3": "^5.9.1",
+    "ngraph.graph": "0.0.18",
+    "ngraph.path": "^1.1.0"
   }
 }

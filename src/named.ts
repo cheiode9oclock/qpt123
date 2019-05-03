@@ -1,8 +1,10 @@
-export class Web {
+import { BaseFactory, Color, HSL, Parser } from '.';
+
+export class Named {
   /**
    * Index of named colors: https://www.w3.org/TR/css-color-4/
    */
-  static readonly named: Map<string, string> = new Map<string, string>([
+  public static readonly css: Map<string, string> = new Map<string, string>([
     ['aliceblue', '#F0F8FF'],
     ['antiquewhite', '#FAEBD7'],
     ['aqua', '#00FFFF'],
@@ -150,6 +152,6 @@ export class Web {
     ['white', '#FFFFFF'],
     ['whitesmoke', '#F5F5F5'],
     ['yellow', '#FFFF00'],
-    ['yellowgreen', '#9ACD32']
+    ['yellowgreen', '#9ACD32'],
   ]);
 }

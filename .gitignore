@@ -1,3 +1,7 @@
 node_modules
 /lib
 .history
+.nyc_output
+__tests__
+coverage
+docs

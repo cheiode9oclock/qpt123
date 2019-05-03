@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "lib": [
+      "es6",
+      "dom"
+    ]
+  },
+  "include": [
+    "globals.d.ts",
+    "src/culture.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".history",
+    "lib",
+    "__tests__",
+    "src/**/*.test.ts"
+  ]
+}
