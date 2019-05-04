@@ -37,6 +37,23 @@ export class Color {
   }
 
   /**
+   * returns a random color based on ranges
+   * @param opaque If alpha channel should be excluded from random, defaults to true
+   */
+  random(opaque = true) {
+    const c = new Array<number>(this.channels.length);
+    
+    this.ranges.map((o, i) => {
+      if (i == this.alphaIndex && opaque) {
+        c[i] = this.ranges[i][1];
+      }else{
+        c[i] = Math.random() * (this.ranges[i][1] - this.ranges[i][0]) + this.ranges[i][0];
+      }
+    })
+    return new Color(c, this.model);
+  }
+
+  /**
    * Ranges of minium and maximum values channels may be set to.
    * Ranges are used when clamping said values.
    */
@@ -104,17 +121,17 @@ export class Color {
     model = 'rgb',
     clampValues = true,
   ) {
-      if (value instanceof Base) {
-        this.base = new Base(value.channels, value.ranges, value.model, value.alphaIndex, value.clampFunction);
-      } else if (typeof value === 'string') {
-        this.base = Parser.fromString(value.toString(), clampValues);
-      } else {
-        this.base = BaseFactory.createGeneric(value, model, clampValues);
-      }
+    if (value instanceof Base) {
+      this.base = new Base(value.channels, value.ranges, value.model, value.alphaIndex, value.clampFunction);
+    } else if (typeof value === 'string') {
+      this.base = Parser.fromString(value.toString(), clampValues);
+    } else {
+      this.base = BaseFactory.createGeneric(value, model, clampValues);
+    }
 
-      if (clampValues) {
-        this.clamp(false);
-      }
+    if (clampValues) {
+      this.clamp(false);
+    }
   }
 
   public channel(model: string = 'rgb', index: number = 0, value?: number, clampValues = true) {
