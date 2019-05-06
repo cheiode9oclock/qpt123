@@ -34,15 +34,9 @@ export class Culture {
   /**
    * 
    * @param modifier A color or method that will modify
-   * @param from 
-   * @param list 
    */
   public addRelation(modifier: any = null, from?: Relation | undefined, list = null): Relation {
-    const relation = new Relation(modifier, from, list);
-
-    if (relation.from !== undefined) {
-      relation.fromList = this.m_items;
-    }
+    const relation = new Relation(modifier);
 
     this.m_items.push(relation);
 
