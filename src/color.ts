@@ -42,11 +42,11 @@ export class Color {
    */
   random(opaque = true) {
     const c = new Array<number>(this.channels.length);
-    
+
     this.ranges.map((o, i) => {
       if (i == this.alphaIndex && opaque) {
         c[i] = this.ranges[i][1];
-      }else{
+      } else {
         c[i] = Math.random() * (this.ranges[i][1] - this.ranges[i][0]) + this.ranges[i][0];
       }
     })
@@ -282,11 +282,28 @@ export class Color {
   }
 
   public add(other: Color, clampValues = true): Color {
-    return Compute.add(this, other, clampValues);
+    // return Compute.add(this, other, clampValues);
+    const copy = this.to(other.model, false);
+    copy.channels.map((o, i, l) => {
+      l[i] = l[i] + other.channels[i];
+    });
+    if (clampValues) {
+      copy.clamp(false);
+    }
+    return copy;
   }
 
   public mix(other: Color, amount: number = 0.5, clampValues = true): Color {
-    return Compute.mix(this, other, amount, clampValues);
+    // return Compute.mix(this, other, amount, clampValues);
+    const copy = this.clone(false);
+    other = other.to(copy.model, false);
+    copy.channels.map((o, i, l) => {
+      l[i] = l[i] + (other.channels[i] - l[i]) * amount;
+    });
+    if (clampValues) {
+      copy.clamp(false);
+    }
+    return copy;
   }
 
   public blacken(amount: number = 0.25, clampValues = true) {
@@ -304,23 +321,46 @@ export class Color {
   }
 
   public lighten(amount: number = 0.25, clampValues = true) {
-    return Compute.lighten(this, amount, clampValues);
+    // return Compute.lighten(this, amount, clampValues);
+    const hsl = this.to('hsl', clampValues);
+    hsl.channels[2] += hsl.ranges[2][1] * amount;
+    return hsl.to(this.model, clampValues);
   }
 
   public darken(amount: number = 0.25, clampValues = true) {
-    return Compute.darken(this, amount, clampValues);
+    // return Compute.darken(this, amount, clampValues);
+    const hsl = this.to('hsl', clampValues);
+
+    hsl.channels[2] -= hsl.channels[2] * amount;
+
+    return hsl.to(this.model, clampValues);
   }
 
   public negate(clampValues = true) {
-    return Compute.negate(this, clampValues);
+    // return Compute.negate(this, clampValues);
+    const rgb = this.to('rgb', clampValues);
+    for (let i = 0; i < 3; i++) {
+      rgb.channels[i] = 255 - rgb.channels[i];
+    }
+    return rgb.to(this.model, clampValues);
   }
 
   public saturate(amount: number = 0.25, clampValues = true) {
-    return Compute.saturate(this, amount, clampValues);
+    // return Compute.saturate(this, amount, clampValues);
+    const hsl = this.to('hsl', clampValues);
+    if (hsl.channels[1] > 0) {
+      hsl.channels[1] += hsl.channels[1] * amount;
+    } else {
+      hsl.channels[1] = amount;
+    }
+    return hsl.to(this.model, clampValues);
   }
 
   public desaturate(amount: number = 0.25, clampValues = true) {
-    return Compute.desaturate(this, amount, clampValues);
+    // return Compute.desaturate(this, amount, clampValues);
+    const hsl = this.to('hsl', clampValues);
+    hsl.channels[1] -= hsl.channels[1] * amount;
+    return hsl.to(this.model, clampValues);
   }
 
   public grayscale(amount = 1, clampValues = true) {
@@ -328,7 +368,12 @@ export class Color {
   }
 
   public rotate(amount: number = 180, clampValues = true) {
-    return Compute.rotate(this, amount, clampValues);
+    // return Compute.rotate(this, amount, clampValues);
+    const hsl = this.to('hsl', clampValues);
+    let hue = hsl.channels[0];
+    hue = (((hue + amount) % 360) + 360) % 360;
+    hsl.channels[0] = hue;
+    return hsl.to(this.model);
   }
 
   public luma(clampValues = true) {

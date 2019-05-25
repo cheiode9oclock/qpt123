@@ -59,8 +59,19 @@ export class Culture {
    * @param name Item id
    */
   public removeById(id: string): Relation | undefined {
+
     if (id !== '') {
-      const index = this.items.findIndex(o => o.id === id);
+      //const index = this.items.findIndex(o => o.id === id);
+      let index = -1;
+      const size = this.items.length;
+      for (let i = 0; i < size; i++) {
+        let item = this.items[i];
+        if (item.id == id) {
+          index = i;
+          break;
+        }
+      }
+
       if (index > -1) {
         return this.items.splice(index, 1)[0];
       }
@@ -80,9 +91,18 @@ export class Culture {
   public getById(id: string): Relation | undefined {
 
     if (id !== '') {
+      /*
       const index = this.items.findIndex(o => o.id === id);
       if (index > -1) {
         return this.items[index];
+      }
+      */
+      const size = this.items.length;
+      for (let i = 0; i < size; i++) {
+        let item = this.items[i];
+        if (item.id == id) {
+          return item;
+        }
       }
     }
     return undefined;

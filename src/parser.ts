@@ -36,7 +36,8 @@ export class Parser {
       let asNumber;
 
       for (let i = 0; i < 3; i++) {
-        const checkOne = values[i].endsWith('%') ? '%' : '-';
+        //        const checkOne = values[i].endsWith('%') ? '%' : '-';
+        const checkOne = values[i].charAt(values[i].length - 1) == '%' ? '%' : '-';
         if (allOrNone === '') {
           allOrNone = checkOne;
         } else if (allOrNone !== checkOne) {

@@ -1,10 +1,10 @@
 {
   "name": "qpt123",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "crash test package",
   "main": "lib/index.js",
   "scripts": {
-    "test": "clear; mocha -r ts-node/register __tests__/**/*.spec.ts",
+    "test": "mocha -r ts-node/register __tests__/**/*.spec.ts",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
