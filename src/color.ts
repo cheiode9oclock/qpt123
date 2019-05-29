@@ -1,6 +1,6 @@
 import { Base } from './base';
 import { BaseFactory } from './base-factory';
-import { Compute } from './compute';
+// import { Compute } from './compute';
 import { Converter } from './converter';
 import { Parser } from './parser';
 
@@ -103,11 +103,17 @@ export class Color {
   }
 
   get isDark(): boolean {
-    return Compute.isDark(this);
+    // return Compute.isDark(this);
+
+    // YIQ equation from http://24ways.org/2010/calculating-color-contrast
+    const copy = this.rgb();
+    const yiq = (copy.channels[0] * 299 + copy.channels[1] * 587 + copy.channels[2] * 114) / 1000;
+    return yiq < 128;
   }
 
   get isLight(): boolean {
-    return Compute.isLight(this);
+    // return Compute.isLight(this);
+    return !this.isDark;
   }
 
   /**
@@ -134,13 +140,29 @@ export class Color {
     }
   }
 
+  /**
+   * Clamp and return value to stay inside range
+   * @param value Value to be clamped
+   * @param range Two numbers array, index 0 is the minimum , index 1 is the maximum
+   */
+  public clampValue(value: number, range: number[]): number {
+    return range[0] > value ? range[0] : range[1] < value ? range[1] : value;
+  }
+
+  public clampRotation(value: number): number {
+    if (value === Infinity || value === -Infinity) {
+      return 0;
+    }
+    return ((value % 360) + 360) % 360;
+  }
+
   public channel(model: string = 'rgb', index: number = 0, value?: number, clampValues = true) {
     const clone = this.to(model, clampValues);
 
     if (value !== undefined) {
       clone.base.channels[index] = value;
       if (clampValues) {
-        clone.base.channels[index] = Compute.clampValue(clone.channels[index], clone.ranges[index]);
+        clone.base.channels[index] = this.clampValue(clone.channels[index], clone.ranges[index]);
       }
       return clone;
     }
@@ -184,7 +206,7 @@ export class Color {
     if (value !== undefined) {
       clone.base.channels[0] = value;
       if (clampValues) {
-        clone.base.channels[0] = Compute.clampRotation(clone.channels[0]);
+        clone.base.channels[0] = this.clampRotation(clone.channels[0]);
       }
       return clone;
     }
@@ -364,7 +386,13 @@ export class Color {
   }
 
   public grayscale(amount = 1, clampValues = true) {
-    return Compute.grayscale(this, amount, clampValues);
+    // return Compute.grayscale(this, amount, clampValues);
+    const rgb = this.to('rgb', clampValues);
+
+    const gray = rgb.channels[0] * 0.21 * amount + rgb.channels[1] * 0.72 * amount + rgb.channels[2] * 0.07 * amount;
+    rgb.channels = [gray, gray, gray, this.alpha];
+
+    return rgb.to(this.model, clampValues);
   }
 
   public rotate(amount: number = 180, clampValues = true) {
@@ -377,7 +405,9 @@ export class Color {
   }
 
   public luma(clampValues = true) {
-    return Compute.luma(this, clampValues);
+    // return Compute.luma(this, clampValues);
+    const rgb = this.to('rgb', clampValues);
+    return (0.3 * rgb.channels[0] + 0.59 * rgb.channels[1] + 0.11 * rgb.channels[0]) / 255;
   }
 
   public toString(): string {
