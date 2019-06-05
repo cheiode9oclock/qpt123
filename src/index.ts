@@ -4,9 +4,9 @@ import { Color } from './color';
 import { Compute } from './compute';
 import { Converter } from './converter';
 import { Culture } from './culture';
+import { Named } from './named';
 import { Parser } from './parser';
 import { Relation } from './relation';
-import { Named } from './named';
 
 export { Relation };
 export { Culture };

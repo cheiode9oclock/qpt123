@@ -34,8 +34,10 @@ export class Culture {
   /**
    * 
    * @param modifier A color or method that will modify
+   * @param from 
+   * @param list 
    */
-  public addRelation(modifier: any = null, from?: Relation | undefined, list = null): Relation {
+  public addRelation(modifier: any = null): Relation {
     const relation = new Relation(modifier);
 
     this.m_items.push(relation);
@@ -78,33 +80,12 @@ export class Culture {
    * @param id Item id
    */
   public getById(id: string): Relation | undefined {
-
+    
     if (id !== '') {
       const index = this.items.findIndex(o => o.id === id);
       if (index > -1) {
         return this.items[index];
       }
-    }
-    return undefined;
-  }
-
-  /**
-   * Get an item by its index
-   * @param id Item index
-   */
-  public getAt(index: number): Relation | undefined {
-    return this.items[index];
-  }
-
-  /**
-   * Get an item by its index and return the resulting color
-   * @param id Item index
-   */
-  public getColorAt(index: number): Color | undefined {
-    try {
-      this.items[index].result;
-    } catch (e) {
-      throw new Error("Culture getColorAt " + e);
     }
     return undefined;
   }

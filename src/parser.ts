@@ -7,6 +7,11 @@ export class Parser {
     val = val.toLowerCase();
     let array;
     let alpha = 1;
+    let prefix = '';
+    const splitValue = val.split("(");
+    if(splitValue.length > 1){
+      prefix = splitValue[0].trim();
+    }
 
     // check for #hex
     if (val.substr(0, 1) === '#') {
@@ -15,8 +20,10 @@ export class Parser {
       if (array) {
         return BaseFactory.createRGB(array);
       }
-    } else if (val.substr(0, 3) === 'rgb') {
-      // check for syntax
+
+
+    } else if (prefix === 'rgb' || prefix === 'rgba') {
+      
       const values: string[] = Parser.extractValues(val);
 
       if (values.length > 3) {
@@ -57,10 +64,13 @@ export class Parser {
 
       return BaseFactory.createRGB(array, clampValues);
 
+
     } else if (Named.css.has(val)) {
       return Parser.fromString(Named.css.get(val) as string);
-    } else if (val.substr(0, 3) === 'hsl') {
-      // check for syntax
+
+
+    } else if (prefix === 'hsl' || prefix === 'hsla') {
+      
       const values: string[] = this.extractValues(val);
 
       if (values.length > 3) {
@@ -106,9 +116,30 @@ export class Parser {
         throw new Error('Parser invalid value for lightness');
       }
 
-      const hsl = BaseFactory.createHSL([h, s, l, alpha], clampValues);
-      return hsl;
+      return BaseFactory.createHSL([h, s, l, alpha], clampValues);
+
+
+    } else if (prefix === 'cmyk') {
+
+      const values = this.extractValues(val).map(e=>Number(e));
+
+      if (values.length === 4) {
+        values.push(1);
+      }
+
+      return BaseFactory.createCMYK(values, clampValues);
+
     }
+    
+    if(prefix){
+      const values = this.extractValues(val).map(e=>Number(e));
+      
+      const tryBase = BaseFactory.createGeneric(values, prefix, clampValues);
+      if(tryBase){
+        return tryBase;
+      }
+    }
+
     throw new Error("Parser couldn't understand value: " + val);
   }
 

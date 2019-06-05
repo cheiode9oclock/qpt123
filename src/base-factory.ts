@@ -78,9 +78,10 @@ export class BaseFactory {
             return BaseFactory.create(values, clampValues, b.ranges, b.model, b.alphaIndex, b.clampFunction);
           }
         }
-    }
+        throw new Error('BaseFactory couldn\'t recognise model: '+model);
+  }
 
-    throw new Error('BaseFactory cannot recognise creation parameters');
+    throw new Error('BaseFactory couldn\'t recognise creation parameters');
   }
 
 

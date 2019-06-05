@@ -22,7 +22,7 @@ export class Relation {
 
   get result(): Color {
     if (this.modifier instanceof Color) {
-        return this.modifier;
+      return this.modifier;
     }
     return this.modifier();
   }
