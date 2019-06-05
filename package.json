@@ -4,7 +4,7 @@
   "description": "crash test package",
   "main": "lib/index.js",
   "scripts": {
-    "test": "clear; mocha -r ts-node/register __tests__/**/*.spec.ts",
+    "test": "mocha -r ts-node/register __tests__/**/*.spec.ts",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
@@ -37,7 +37,7 @@
     "@types/d3": "5.7.1",
     "@types/mocha": "^5.2.6",
     "chai": "^4.2.0",
-    "mocha": "^6.0.0",
+    "mocha": "^6.1.4",
     "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "ts-node": "^8.0.2",
