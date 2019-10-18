@@ -112,6 +112,7 @@ export class Parser {
       }
 
       l = Parser.getPercentage(lgt, 100);
+      
       if (Number.isNaN(l)) {
         throw new Error('Parser invalid value for lightness');
       }

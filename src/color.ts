@@ -86,10 +86,10 @@ export class Color {
 
     for (let i = 0; i < 3; i++) {
       asNumber = rgb.channels[i]; // Color.clamp(Number(rgb.channels[i]), 0, 255, 0);
-      result += ('0' + Number(asNumber.toFixed(0)).toString(16)).slice(-2).toUpperCase();
+      result += ('0' + Number( Number(asNumber).toFixed(0)).toString(16)).slice(-2).toUpperCase();
     }
 
-    result += ('0' + Number((rgb.alpha * 255).toFixed(0)).toString(16)).slice(-2).toUpperCase();
+    result += ('0' + Number((   Number(rgb.alpha) * 255).toFixed(0)).toString(16)).slice(-2).toUpperCase();
     return result;
   }
 
